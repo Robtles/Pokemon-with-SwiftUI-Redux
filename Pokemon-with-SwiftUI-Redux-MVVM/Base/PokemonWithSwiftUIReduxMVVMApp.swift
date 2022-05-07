@@ -1,5 +1,5 @@
 //
-//  Pokemon_with_SwiftUI_Redux_MVVMApp.swift
+//  PokemonWithSwiftUIReduxMVVMApp.swift
 //  Pokemon-with-SwiftUI-Redux-MVVM
 //
 //  Created by Rob on 07/05/2022.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Pokemon_with_SwiftUI_Redux_MVVMApp: App {
+struct PokemonWithSwiftUIReduxMVVMApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
