@@ -5,24 +5,36 @@ This is a simple, playground project where I will try to build a Pokedex app. Th
 - [Redux](https://redux.js.org) for app state management
 - [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) as the main pattern
 
-To ensure keeping a clean syntax, I will use `SwiftLint` as a dependency (the dependency manager being ~~Swift Package Manager~~ CocoaPods).
-
 Every step will be documented in this file.
 
-## Adding SwiftLint dependency
+## Dependencies
 
-I was expecting to use Swift Package Manager to install `SwiftLint`, but this solution isn't available yet.
+- `SwiftLint`: to ensure keeping a clean syntax, I will use SwiftLint as a dependency. As it does not handle Swift Package Manager yet, I will use CocoaPods instead to add it to the project.
+- `Moya`: all the API requests will be simplified with Moya, which itself also embeds `Alamofire` - see API section below.
+- `Kingfisher`: will be used for image downloading/caching.
 
-According to the `SwiftLint` documentation, I tried instead to use [Mint](https://github.com/yonaskolb/Mint), but I also got stuck with an issue that I was not able to solve: 
+## Expected design
 
-> Library not loaded: /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib
-  Referenced from: /usr/local/Cellar/mint-lang/0.14.0/bin/mint
-  Reason: tried: '/usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib' (no such file), '/usr/local/lib/libssl.1.1.dylib' (no such file), '/usr/lib/libssl.1.1.dylib' (no such file)
+I will try to reproduce [AC1Design's work](https://dribbble.com/shots/15128634-Pokemon-Pokedex-Website-Redesign-Concept), in a mobile way (the specific Pokemon sheet will appear as a modal above the list).
 
-I ended up using the good-old [CocoaPods](https://cocoapods.org/), initalizing it with `pod init`, then updating the Podfile to include `SwiftLint`'s dependency. Adding the expected Build Phase in Xcode and everything was running smooth. 
+![test](https://user-images.githubusercontent.com/25252204/168324402-3d39370e-c367-4393-8279-ab9f692bf709.jpg)
 
-<img width="663" alt="Capture d’écran 2022-05-07 à 19 21 57" src="https://user-images.githubusercontent.com/25252204/167265035-0f2fedba-e013-4648-ada2-d0a43f6f2577.png">
+## Model
 
-Surprisingly, SwiftLint only threw one error, asking me to remove the underscores from the main `App` struct. 
+The main object of the model will be of course the one representing a `Pokemon`. The following information will be fetched from the API : name, description, abilities, height, weight, stats, type and evolution chain. 
+
+Some subtypes will also exist and evolve to follow the design needs: `PokemonType`, `PokemonStat`, `PokemonEvolutionItem` and `PokemonEvolutionType`.
+
+The id of the Pokemons will be inferred at first (**I will only focus on the first 151 Pokemon of Kanto generation**). The image URLs will be inferred from the Pokemon ids.
+
+## API
+
+To fetch all the required data, I will use the [PokeAPI](https://pokeapi.co/docs/v2) as it provides full and exhaustive data and does not require any key.
+
+Two main calls are to be made:
+- An `.all` endpoint which gathers the 151 first Pokemon with their basic data (actually only the name since their id and image URLs will be inferred).
+- Some `.description(id)`, `.species(id)` and `.evolution(id)` endpoints which will gather more data to display all the required information for a given Pokemon. Please note that this information can be found through several endpoints only, so they will be called concurrently. Also, for the `.evolution(id)` endpoint, the `id` parameter does not correspond to the Pokemon id but to its specific evolution chain. This information is to be found in the `.species(id)` endpoint previously.
+
+Moya dependency will help a lot to simplify these calls, it will return a response with some JSON content that I will map into Swift structs thanks to the [Codable](https://developer.apple.com/documentation/swift/codable) protocol.
 
 ## Coming next... Adding the Redux vibe to the project

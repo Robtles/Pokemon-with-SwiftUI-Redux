@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct PokemonWithSwiftUIReduxMVVMApp: App {
+    // MARK: - View
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Text("Hello world!")
         }
     }
 }
