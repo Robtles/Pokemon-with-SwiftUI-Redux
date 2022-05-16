@@ -18,8 +18,6 @@ struct PokemonDescriptionResult: Codable {
     let name: String
     /// The base stats list for this Pokemon
     let stats: [PokemonStatContainer]
-    /// The Pokemon types
-    let types: [PokemonTypeContainer]
     /// The Pokemon weight in hectograms
     let weight: Double
 }
@@ -37,22 +35,6 @@ struct PokemonAbilityContainer: Codable {
 struct PokemonAbilityContainerInformation: Codable {
     // MARK: Properties
     /// The ability name
-    let name: String
-}
-
-// MARK: - Pokemon Type Container
-struct PokemonTypeContainer: Codable {
-    // MARK: Properties
-    /// The Pokemon type
-    let type: PokemonTypeContainerInformation
-    /// The type order
-    let slot: Int
-}
-
-// MARK: - Pokemon Type Container Information
-struct PokemonTypeContainerInformation: Codable {
-    // MARK: Properties
-    /// The Pokemon type name
     let name: String
 }
 

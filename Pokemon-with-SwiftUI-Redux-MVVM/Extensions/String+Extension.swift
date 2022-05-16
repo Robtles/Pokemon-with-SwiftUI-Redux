@@ -15,4 +15,15 @@ extension String {
             .filter { !$0.isEmpty }
             .last ?? "")
     }
+    
+    /// Fixes the Nidoran male and female names, and capitalizes every name whatsoever
+    var fixedName: String {
+        if hasSuffix("-m") {
+            return replacingOccurrences(of: "-m", with: "♂").capitalized
+        } else if hasSuffix("-f") {
+            return replacingOccurrences(of: "-f", with: "♀").capitalized
+        } else {
+            return capitalized
+        }
+    }
 }

@@ -14,8 +14,6 @@ extension Pokemon {
     /// - Parameter decodedInformation: The JSON decoded result
     func feed<T: Codable>(with decodedInformation: T) {
         switch decodedInformation {
-        case let pokemonAllResultResult as PokemonAllResultResult:
-            feedBaseInformation(with: pokemonAllResultResult)
         case let pokemonDescriptionResult as PokemonDescriptionResult:
             feedDescription(with: pokemonDescriptionResult)
         case let pokemonEvolutionResult as PokemonEvolutionResult:
@@ -27,13 +25,21 @@ extension Pokemon {
         }
     }
     
-    // MARK: Internal Methods
-    /// Feeds the base information of a `Pokemon` (actually simple the name)
-    /// - Parameter data: The `Pokemon`'s base information data
-    private func feedBaseInformation(with data: PokemonAllResultResult) {
-        self.name = data.name.capitalized
+    /// Feeds a `Pokemon` types with the JSON information
+    /// - Parameters:
+    ///   - typeResult: The type information
+    ///   - pokemonResult: The specific Pokemon information (the type slot for this species)
+    func feedTypes(
+        with typeResult: PokemonTypeResult,
+        and pokemonResult: PokemonTypePokemonResult
+    ) {
+        guard let type = PokemonType(rawValue: typeResult.name) else {
+            return
+        }
+        set(type: type, at: pokemonResult.slot - 1)
     }
     
+    // MARK: Internal Methods
     /// Feeds the description of a `Pokemon` (abilities, types, height, stats, weight)
     /// - Parameter data: The `Pokemon`'s description information data
     private func feedDescription(with data: PokemonDescriptionResult) {
@@ -42,15 +48,12 @@ extension Pokemon {
             .compactMap { $0.ability.name.replacingOccurrences(of: "-", with: " ").capitalized }
             .prefix(2))
         self.height = data.height / 10.0
-        self.name = data.name.capitalized
+        self.name = data.name.fixedName
         self.stats = data.stats.reduce(into: [:], {
             if let pokemonStat = PokemonStat(rawValue: $1.stat.name) {
                 $0?[pokemonStat] = $1.baseStat
             }
         })
-        self.types = data.types
-            .sorted(by: { $0.slot < $1.slot })
-            .compactMap { PokemonType(rawValue: $0.type.name) ?? .unknown }        
         self.weight = data.weight / 10.0
     }
     

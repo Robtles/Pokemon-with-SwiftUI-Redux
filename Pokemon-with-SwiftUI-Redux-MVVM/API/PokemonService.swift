@@ -16,10 +16,10 @@ enum PokemonService {
     fileprivate static let baseURL = "https://pokeapi.co/api/v2/"
     /// The request provider
     static let provider = MoyaProvider<PokemonService>()
+    /// The number of known `Pokemon` types
+    private static let typeCount = 18
     
     // MARK: Cases
-    /// Fetches all the first 151 Pokemon
-    case all
     /// Fetches the description of a specific Pokemon, identified by its index in Kanto's Pokedex
     case description(id: Int)
     /// Fetches the eventual evolution chains of a specific Pokemon.
@@ -28,28 +28,44 @@ enum PokemonService {
     case evolution(id: Int)
     /// Fetches the description of a specific Pokemon species, identified by its index in Kanto's Pokedex
     case species(id: Int)
+    /// Fetches the information of a given type. It also gives all the Pokemon which are of this type
+    case type(id: Int)
 
     // MARK: Fetch Helper
-    /// Fetches all the 151 Pokemon of the Kanto region. This API only gets their name
+    /// Fetches all the 151 Pokemon of the Kanto region. This API only gets their name and types
     /// - Parameter completion: The result, either the fetched `Pokemon` list or an error
     static func fetchAllPokemons(_ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
-        PokemonService.fetchAll { result in
-            switch result {
-            case .success(let response):
-                completion(.success(
-                    response
-                        .results
-                        .enumerated()
-                        .map {
-                            let pokemon = Pokemon($0.offset + 1)
-                            pokemon.feed(with: $0.element)
-                            return pokemon
+        var pokemons: Set<Pokemon> = []
+        var countDown = CountDown {
+            let sortedPokemons = Array(pokemons.sorted(by: { $0.id < $1.id }))
+            completion(.success(sortedPokemons))
+        }
+        (1...typeCount).forEach { id in
+            countDown.addAction {
+                fetchType(with: id) { result in
+                    switch result {
+                    case .success(let response):
+                        response.pokemon.forEach { pokemonResult in
+                            if let pokemonId = pokemonResult.pokemon.url.extractedIdFromUrl,
+                               pokemonId <= Pokemon.kantoLimit {
+                                if let pokemon = pokemons.first(where: { $0.id == pokemonId }) {
+                                    pokemon.feedTypes(with: response, and: pokemonResult)
+                                } else {
+                                    let pokemon = Pokemon(pokemonId)
+                                    pokemon.name = pokemonResult.pokemon.name.fixedName
+                                    pokemon.feedTypes(with: response, and: pokemonResult)
+                                    pokemons.insert(pokemon)
+                                }
+                            }
                         }
-                ))
-            case .failure(let error):
-                completion(.failure(error))
+                    default:
+                        break
+                    }
+                    countDown.decrease()
+                }
             }
         }
+        countDown.start()
     }
     
     /// Fully fetches a `Pokemon` information: its description and its
@@ -58,7 +74,10 @@ enum PokemonService {
     /// - Parameters:
     ///   - id: The Pokemon identifier in Kanto's Pokedex
     ///   - completion: The completion with the updated `Pokemon`
-    static func fetch(pokemonWithId id: Int, _ completion: @escaping (Pokemon) -> Void) {
+    static func fetch(
+        pokemonWithId id: Int,
+        _ completion: @escaping (Pokemon) -> Void
+    ) {
         let pokemon = Pokemon(id)
         PokemonService.fetchDescription(for: id) { result in
             switch result {
@@ -111,13 +130,15 @@ enum PokemonService {
     }
     
     // MARK: Internal Fetch Methods
-    /// Fetches all the 151 original Pokemon from Kanto
-    private static func fetchAll(_ completion: @escaping (Result<PokemonAllResult, Error>) -> Void) {
-        PokemonService.all.fetch(PokemonAllResult.self) { result in
+    private static func fetchType(
+        with id: Int,
+        _ completion: @escaping (Result<PokemonTypeResult, Error>) -> Void
+    ) {
+        PokemonService.type(id: id).fetch(PokemonTypeResult.self) { result in
             completion(result)
         }
     }
-    
+
     /// Fetches the description of a Pokemon identified by its Kanto's Pokedex id
     /// - Parameters:
     ///   - id: The Pokemon Kanto's id
@@ -193,14 +214,14 @@ extension PokemonService: TargetType {
     
     var path: String {
         switch self {
-        case .all:
-            return "pokemon"
         case .description(let id):
             return "pokemon/\(id)"
         case .evolution(let id):
             return "evolution-chain/\(id)"
         case .species(let id):
             return "pokemon-species/\(id)"
+        case .type(let id):
+            return "type/\(id)"
         }
     }
     
@@ -209,17 +230,7 @@ extension PokemonService: TargetType {
     }
     
     var task: Task {
-        switch self {
-        case .all:
-            return .requestParameters(
-                parameters: [
-                    "limit": 151
-                ],
-                encoding: URLEncoding.queryString
-            )
-        default:
-            return .requestPlain
-        }
+        return .requestPlain
     }
     
     var headers: [String: String]? {

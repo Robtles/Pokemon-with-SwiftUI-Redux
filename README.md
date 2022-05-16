@@ -31,8 +31,8 @@ The id of the Pokemons will be inferred at first (**I will only focus on the fir
 
 To fetch all the required data, I will use the [PokeAPI](https://pokeapi.co/docs/v2) as it provides full and exhaustive data and does not require any key.
 
-Two main calls are to be made:
-- An `.all` endpoint which gathers the 151 first Pokemon with their basic data (actually only the name since their id and image URLs will be inferred).
+Two main calls are to be made, each of them corresponding to the two main views of the app:
+- An initial call which will actually be a succession of calls for each of the 18 existing Pokemon types. These calls will gather information for the Pokemon types, but will also tell us which Pokemon correspond to each type, with their name and Pokedex index. This is how the initial Pokemon list will be fetched (the Pokemon's image URL will be inferred from their id).
 - Some `.description(id)`, `.species(id)` and `.evolution(id)` endpoints which will gather more data to display all the required information for a given Pokemon. Please note that this information can be found through several endpoints only, so they will be called concurrently. Also, for the `.evolution(id)` endpoint, the `id` parameter does not correspond to the Pokemon id but to its specific evolution chain. This information is to be found in the `.species(id)` endpoint previously.
 
 Moya dependency will help a lot to simplify these calls, it will return a response with some JSON content that I will map into Swift structs thanks to the [Codable](https://developer.apple.com/documentation/swift/codable) protocol.

@@ -29,7 +29,7 @@ struct PokemonEvolutionChainResult: Codable {
     /// A list of chain links
     let evolvesTo: [PokemonEvolutionChainResult]
     /// The Pokemon species at this point in the evolution chain
-    let species: PokemonEvolutionSpeciesResult
+    let species: PokemonInformationResult
 }
 
 // MARK: - Pokemon Evolution Details Result
@@ -55,14 +55,6 @@ struct PokemonEvolutionDetailsItemResult: Codable {
     // MARK: Properties
     /// The name of the item that is required for the Pokemon to evolve
     let name: String
-}
-
-// MARK: - Pokemon Evolution Species Result
-struct PokemonEvolutionSpeciesResult: Codable {
-    /// The name of the Pokemon
-    let name: String
-    /// The URL of the Pokemon
-    let url: String
 }
 
 // MARK: - Pokemon Evolution Details Trigger Result

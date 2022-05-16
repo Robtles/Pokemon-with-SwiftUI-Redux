@@ -44,7 +44,7 @@ struct PokemonEvolution {
     /// - Returns: The resulting `PokemonEvolution` (or nil if nothing found)
     static func from(_ evolvesTo: PokemonEvolutionChainResult) -> PokemonEvolution? {
         guard let id = evolvesTo.species.url.extractedIdFromUrl,
-              id <= 151,
+              id <= Pokemon.kantoLimit,
               let firstEvolutionDetails = evolvesTo.evolutionDetails.first,
               let type = PokemonEvolutionType.from(firstEvolutionDetails) else {
             return nil
