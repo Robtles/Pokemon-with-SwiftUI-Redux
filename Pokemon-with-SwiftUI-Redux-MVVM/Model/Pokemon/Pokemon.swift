@@ -7,6 +7,19 @@
 
 import Foundation
 
+// MARK: - Pokemon Container
+/// A observable container that will be able
+/// to dispatch any update to the views
+class PokemonContainer: ObservableObject {
+    // MARK: - Instance Properties
+    @Published var pokemons: [Pokemon]
+    
+    // MARK: - Init Methods
+    init(_ pokemons: [Pokemon] = []) {
+        self.pokemons = pokemons
+    }
+}
+
 // MARK: - Pokemon
 /// Represents a Pokemon
 class Pokemon: Identifiable, Hashable {

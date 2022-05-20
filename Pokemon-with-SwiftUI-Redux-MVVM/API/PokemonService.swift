@@ -93,7 +93,6 @@ enum PokemonService {
             case .success(let response):
                 pokemon.feed(with: response)
                 fetch(pokemon, evolutionChainWith: response) {
-                    print("")
                     completion($0)
                 }
             default:

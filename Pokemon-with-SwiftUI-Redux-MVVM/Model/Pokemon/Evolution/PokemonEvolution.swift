@@ -29,7 +29,7 @@ struct PokemonEvolution {
     let evolutions: [PokemonEvolution]
     
     // MARK: Init Methods
-    private init(
+    init(
         information: (id: Int, name: String),
         type: PokemonEvolutionType,
         evolutions: [PokemonEvolution]

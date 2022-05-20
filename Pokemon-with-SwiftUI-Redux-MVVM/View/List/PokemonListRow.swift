@@ -55,8 +55,8 @@ struct PokemonListRow_Previews: PreviewProvider {
                 .ignoresSafeArea()
             HStack(spacing: 0) {
                 ForEach([
-                    pokemonSampleBulbasaur,
-                    pokemonSampleIvysaur
+                    pokemonSimpleSampleBulbasaur,
+                    pokemonSimpleSampleIvysaur
                 ]) {
                     PokemonListRow(pokemon: $0)
                 }

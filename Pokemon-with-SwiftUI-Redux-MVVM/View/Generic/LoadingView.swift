@@ -43,7 +43,7 @@ struct LoadingView: ViewModifier {
                     }
                 }
             }
-                .animation(.easeInOut(duration: 0.6), value: !loading)
+            .animation(.easeInOut(duration: 0.6), value: !loading)
         )
     }
 }

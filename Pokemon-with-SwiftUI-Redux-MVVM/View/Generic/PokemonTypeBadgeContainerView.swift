@@ -34,8 +34,8 @@ struct PokemonTypeBadgeContainerView_Previews: PreviewProvider {
         ZStack(alignment: .center) {
             Color.white
             VStack(spacing: 12) {
-                PokemonTypeBadgeContainerView(pokemonTypes: pokemonSampleBulbasaur.sortedTypes)
-                PokemonTypeBadgeContainerView(pokemonTypes: pokemonSamplePikachu.sortedTypes)
+                PokemonTypeBadgeContainerView(pokemonTypes: pokemonSimpleSampleBulbasaur.sortedTypes)
+                PokemonTypeBadgeContainerView(pokemonTypes: pokemonSimpleSamplePikachu.sortedTypes)
             }
         }
     }
