@@ -12,13 +12,16 @@ import SwiftUI
 /// and their corresponding view.
 enum Modal {
     // MARK: Cases
-    case pokemonView
+    case pokemonView(pokemonId: Binding<Int?>)
     
     // MARK: View Properties
     func body(visibilityParameter: Binding<Bool>) -> some View {
         switch self {
-        case .pokemonView:
-            return PokemonView(showing: visibilityParameter)
+        case .pokemonView(let pokemonId):
+            return PokemonView(
+                pokemonId: pokemonId,
+                showing: visibilityParameter
+            )
         }
     }
 }

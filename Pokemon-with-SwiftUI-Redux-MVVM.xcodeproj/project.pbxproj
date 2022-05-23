@@ -49,6 +49,7 @@
 		D4BFBABA2826C69900D764D2 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D4BFBAB92826C69900D764D2 /* README.md */; };
 		D4CA091C2837C55F0072A959 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CA091B2837C55F0072A959 /* View+Extension.swift */; };
 		D4DD98662833C9560046115C /* PokemonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DD98652833C9560046115C /* PokemonView.swift */; };
+		D4E79B5F283C31CA0058F3E5 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E79B5E283C31CA0058F3E5 /* Coordinator.swift */; };
 		E0E13D5F01FD2B5E027C4D9C /* Pods_Pokemon_with_SwiftUI_Redux_MVVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D78C069213FCF1736A6BA9D /* Pods_Pokemon_with_SwiftUI_Redux_MVVM.framework */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +99,7 @@
 		D4BFBAB92826C69900D764D2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		D4CA091B2837C55F0072A959 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		D4DD98652833C9560046115C /* PokemonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonView.swift; sourceTree = "<group>"; };
+		D4E79B5E283C31CA0058F3E5 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -276,6 +278,7 @@
 		D4BFBAB62826C5B400D764D2 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				D4E79B5E283C31CA0058F3E5 /* Coordinator.swift */,
 				D47BD9B22832A14600CAB2D2 /* CountDown.swift */,
 				D47BD9BD2832A2E700CAB2D2 /* Debug.swift */,
 				D4BFBAA82826C2BD00D764D2 /* PokemonWithSwiftUIReduxMVVMApp.swift */,
@@ -467,6 +470,7 @@
 				D4DD98662833C9560046115C /* PokemonView.swift in Sources */,
 				D43DA080282EAC7D00253516 /* Pokemon+Evolution.swift in Sources */,
 				D43DA083282EAC7D00253516 /* PokemonService.swift in Sources */,
+				D4E79B5F283C31CA0058F3E5 /* Coordinator.swift in Sources */,
 				D47BD9B72832A2C500CAB2D2 /* PokemonList.swift in Sources */,
 				D43DA088282EAC7D00253516 /* PokemonStat.swift in Sources */,
 				D47BD9BF2832A2E700CAB2D2 /* Debug.swift in Sources */,

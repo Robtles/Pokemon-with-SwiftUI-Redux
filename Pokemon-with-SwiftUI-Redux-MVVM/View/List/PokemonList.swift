@@ -29,7 +29,9 @@ struct PokemonList: View {
     @State private var isPresentingPokemon: Bool = false
     /// If the view is in a loading state
     @State private var loading: Bool = true
-
+    /// The selected Pokemon id
+    @State private var pokemonId: Int?
+    
     // MARK: View Properties
     var body: some View {
         ZStack(alignment: .top) {
@@ -67,7 +69,7 @@ struct PokemonList: View {
         // The loading overview
         .modifier(LoadingView(loading: $loading))
         // The Pokemon modal
-        .showModal(.pokemonView, if: $isPresentingPokemon)
+        .showModal(.pokemonView(pokemonId: $pokemonId), if: $isPresentingPokemon)
     }
     
     // MARK: View Methods
@@ -77,7 +79,7 @@ struct PokemonList: View {
     /// - Parameter id: The Pokemon Kanto `id`
     private func presentAndFetchInformationOfPokemonWithId(_ id: Int) {
         isPresentingPokemon = true
-        pokemonCoordinator.pokemonId = id
+        pokemonId = id
         pokemonCoordinator.load(pokemonWithId: id)
     }
 }

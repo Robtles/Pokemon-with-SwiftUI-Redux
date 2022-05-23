@@ -18,9 +18,8 @@ struct PokemonEvolutionChainView: View {
     // MARK: Instance Properties
     /// The passed `Pokemon` container
     @EnvironmentObject var pokemonCoordinator: PokemonCoordinator
-    
-    /// The id of the Pokemon to display
-    var pokemonId: Int
+    /// The id of the Pokemon currently displayed
+    @Binding var pokemonId: Int?
     
     // MARK: View Properties
     var body: some View {
@@ -40,10 +39,9 @@ struct PokemonEvolutionChainView: View {
                                     .padding(.trailing, 4)
                             }
                             .onTapGesture {
-                                let pokemonId = evolution.information.id
-                                if pokemonId != pokemonCoordinator.pokemonId {
-                                    pokemonCoordinator.pokemonId = evolution.information.id
-                                    pokemonCoordinator.load(pokemonWithId: pokemonId)
+                                if evolution.information.id != pokemonId {
+                                    pokemonId = evolution.information.id
+                                    pokemonCoordinator.load(pokemonWithId: evolution.information.id)
                                 }
                             }
                         }
@@ -59,24 +57,12 @@ struct PokemonEvolutionChainView_Previews: PreviewProvider {
         ZStack {
             Color.black
             VStack(spacing: 24) {
-                PokemonEvolutionChainView(pokemonId: pokemonFullSampleChansey.id)
-                    .environmentObject(
-                        samplePokemonCoordinator(
-                            withSelectedPokemonId: pokemonFullSampleChansey.id
-                        )
-                    )
-                PokemonEvolutionChainView(pokemonId: pokemonFullSampleCaterpie.id)
-                    .environmentObject(
-                        samplePokemonCoordinator(
-                            withSelectedPokemonId: pokemonFullSampleCaterpie.id
-                        )
-                    )
-                PokemonEvolutionChainView(pokemonId: pokemonFullSampleEevee.id)
-                    .environmentObject(
-                        samplePokemonCoordinator(
-                            withSelectedPokemonId: pokemonFullSampleEevee.id
-                        )
-                    )
+                PokemonEvolutionChainView(pokemonId: .constant(pokemonFullSampleChansey.id))
+                    .environmentObject(samplePokemonCoordinator)
+                PokemonEvolutionChainView(pokemonId: .constant(pokemonFullSampleCaterpie.id))
+                    .environmentObject(samplePokemonCoordinator)
+                PokemonEvolutionChainView(pokemonId: .constant(pokemonFullSampleEevee.id))
+                    .environmentObject(samplePokemonCoordinator)
             }
         }
         .ignoresSafeArea()

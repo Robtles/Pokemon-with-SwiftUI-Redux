@@ -113,13 +113,9 @@ var pokemonFullSampleEevee: Pokemon {
     return pokemon
 }
 
-func samplePokemonCoordinator(withSelectedPokemonId id: Int) -> PokemonCoordinator {
-    let container = PokemonCoordinator([
-        pokemonSimpleSampleBulbasaur,
-        pokemonFullSampleCaterpie,
-        pokemonFullSampleEevee
-    ])
-    container.pokemonId = id
-    return container
-}
+let samplePokemonCoordinator = PokemonCoordinator([
+    pokemonSimpleSampleBulbasaur,
+    pokemonFullSampleCaterpie,
+    pokemonFullSampleEevee
+])
 #endif

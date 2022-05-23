@@ -18,13 +18,15 @@ struct PokemonView: View {
     // MARK: Instance Properties
     /// The passed `Pokemon` container
     @EnvironmentObject var pokemonCoordinator: PokemonCoordinator    
+    /// The selected Pokemon id
+    @Binding var pokemonId: Int?
     /// The variable that handles the view visibility
     @Binding var showing: Bool
     
     // MARK: Computed Properties
     /// A simpler access to the Pokemon shown in this view
     private var pokemon: Pokemon? {
-        pokemonCoordinator.pokemons.first(where: { $0.id == pokemonCoordinator.pokemonId })
+        pokemonCoordinator.pokemons.first(where: { $0.id == pokemonId })
     }
     
     // MARK: View Properties
@@ -138,13 +140,11 @@ struct PokemonView: View {
                                 )
                             }
                             .padding(.horizontal, 8.0)
-                            if let pokemon = pokemon {
-                                Text("Evolution")
-                                    .font(Style.Font.bold(sized: 16.0))
-                                    .padding(.top, 18)
-                                PokemonEvolutionChainView(pokemonId: pokemon.id)
-                                    .padding(.top, 12)
-                            }                            
+                            Text("Evolution")
+                                .font(Style.Font.bold(sized: 16.0))
+                                .padding(.top, 18)
+                            PokemonEvolutionChainView(pokemonId: $pokemonId)
+                                .padding(.top, 12)
                         }
                     }
                 }
@@ -171,13 +171,10 @@ struct PokemonView_Previews: PreviewProvider {
                 .opacity(0.8)
                 .ignoresSafeArea()
             PokemonView(
+                pokemonId: .constant(id),
                 showing: .constant(true)
             )
-            .environmentObject(
-                samplePokemonCoordinator(
-                    withSelectedPokemonId: pokemonFullSampleEevee.id
-                )
-            )
+            .environmentObject(samplePokemonCoordinator)
         }
     }
     
@@ -190,8 +187,7 @@ struct PokemonView_Previews: PreviewProvider {
     static var previews: some View {
         ForEach(pokemonsToDisplay) {
             view(for: $0.id)
-                .environmentObject(
-                    samplePokemonCoordinator(withSelectedPokemonId: $0.id))
+                .environmentObject(samplePokemonCoordinator)
                 .previewDevice("iPhone 13 Pro Max")
         }
     }
