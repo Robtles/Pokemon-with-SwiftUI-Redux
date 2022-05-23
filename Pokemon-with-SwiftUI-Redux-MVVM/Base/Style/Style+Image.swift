@@ -11,7 +11,9 @@ import SwiftUI
 extension Style {
     /// The image resources container
     enum Image: String {
+        case crossButton = "CrossButton"
         case pokeBallIcon = "PokeBallIcon"
+        case unknownPlaceholder = "UnknownPlaceholder"
     }
     
     // MARK: Methods

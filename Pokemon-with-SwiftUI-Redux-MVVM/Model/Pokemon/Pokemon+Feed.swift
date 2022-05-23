@@ -60,34 +60,28 @@ extension Pokemon {
     /// Feeds the evolution chain of a `Pokemon`
     /// - Parameter data: The `Pokemon`'s evolution information data
     private func feedEvolution(with data: PokemonEvolutionResult) {
-        let evolutions = data.chain.evolvesTo.compactMap { PokemonEvolution.from($0) }
-        if evolutions.first?.information.id == id {
-            // In some cases, the evolution chain contains a baby Pokemon that was introduced in later generations
-            // and comes before the Kanto's Pokemon in its chain (i.e. Pichu for Pikachu).
-            self.evolutionChain = PokemonEvolutionChain(
-                initialPokemon: (
-                    id: data.chain.evolvesTo.first?.species.url.extractedIdFromUrl,
-                    name: data.chain.evolvesTo.first?.species.name.capitalized
-                ),
-                evolutions: evolutions.first?.evolutions ?? []
-            )
-        } else {
-            self.evolutionChain = PokemonEvolutionChain(
-                initialPokemon: (
-                    id: data.chain.species.url.extractedIdFromUrl,
-                    name: data.chain.species.name.capitalized
-                ),
-                evolutions: evolutions
-            )
+        guard let id = data.chain.species.url.extractedIdFromUrl else {
+            return
         }
+        let name = data.chain.species.name.fixedName
+        self.evolution = PokemonEvolution(
+            information: (id: id, name: name),
+            type: .initial,
+            evolutions: data.chain.evolvesTo.compactMap { PokemonEvolution.from($0) }
+        )
     }
 
     /// Feeds the species information of a `Pokemon` (contains its description and also the evolution chain id)
     /// - Parameter data: The `Pokemon`'s species information data
     private func feedSpecies(with data: PokemonSpeciesResult) {
-        // Might be improved with an enum contain languages and versions later
-        self.description = data.flavorTextEntries
-            .first(where: { $0.language.name == "en" && $0.version.name == "blue" })?
-            .flavorText
+        for version in Version.all {
+            if let description = data.flavorTextEntries
+                .first(where: { $0.language.name == "en" && $0.version.name == version.rawValue })?
+                .flavorText
+                .replacingOccurrences(of: "\n", with: " ") {
+                self.description = description
+                return
+            }
+        }
     }
 }

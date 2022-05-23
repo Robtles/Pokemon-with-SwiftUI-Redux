@@ -1,0 +1,84 @@
+//
+//  PokemonEvolutionChainView.swift
+//  Pokemon-with-SwiftUI-Redux-MVVM
+//
+//  Created by Rob on 20/05/2022.
+//
+
+import Kingfisher
+import SwiftUI
+
+// MARK: - Pokemon Evolution Chain View
+struct PokemonEvolutionChainView: View {
+    // MARK: Computed Properties
+    var pokemon: Pokemon? {
+        pokemonCoordinator.pokemons.first(where: { $0.id == pokemonId })
+    }
+    
+    // MARK: Instance Properties
+    /// The passed `Pokemon` container
+    @EnvironmentObject var pokemonCoordinator: PokemonCoordinator
+    
+    /// The id of the Pokemon to display
+    var pokemonId: Int
+    
+    // MARK: View Properties
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if (pokemon?.evolution?.evolutions ?? []).isEmpty {
+                Text("No evolution for this Pokemon")
+                    .font(Style.Font.regular(sized: 14.0))
+                    .foregroundColor(Style.Color.grayText)
+            } else {
+                ForEach(pokemon?.evolution?.chain() ?? [], id: \.id) { evolutionChain in
+                    HStack(spacing: 0) {
+                        ForEach(evolutionChain, id: \.information.id) { evolution in
+                            HStack(spacing: 0) {
+                                evolution.type.view
+                                KFImage(URL(string: Pokemon(evolution.information.id).viewImageStringURL))
+                                    .frame(width: 62.0, height: 62.0)
+                                    .padding(.trailing, 4)
+                            }
+                            .onTapGesture {
+                                let pokemonId = evolution.information.id
+                                if pokemonId != pokemonCoordinator.pokemonId {
+                                    pokemonCoordinator.pokemonId = evolution.information.id
+                                    pokemonCoordinator.load(pokemonWithId: pokemonId)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct PokemonEvolutionChainView_Previews: PreviewProvider {
+    static var previews: some View {
+        ZStack {
+            Color.black
+            VStack(spacing: 24) {
+                PokemonEvolutionChainView(pokemonId: pokemonFullSampleChansey.id)
+                    .environmentObject(
+                        samplePokemonCoordinator(
+                            withSelectedPokemonId: pokemonFullSampleChansey.id
+                        )
+                    )
+                PokemonEvolutionChainView(pokemonId: pokemonFullSampleCaterpie.id)
+                    .environmentObject(
+                        samplePokemonCoordinator(
+                            withSelectedPokemonId: pokemonFullSampleCaterpie.id
+                        )
+                    )
+                PokemonEvolutionChainView(pokemonId: pokemonFullSampleEevee.id)
+                    .environmentObject(
+                        samplePokemonCoordinator(
+                            withSelectedPokemonId: pokemonFullSampleEevee.id
+                        )
+                    )
+            }
+        }
+        .ignoresSafeArea()
+    }
+}

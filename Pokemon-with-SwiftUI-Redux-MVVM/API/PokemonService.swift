@@ -46,8 +46,7 @@ enum PokemonService {
                     switch result {
                     case .success(let response):
                         response.pokemon.forEach { pokemonResult in
-                            if let pokemonId = pokemonResult.pokemon.url.extractedIdFromUrl,
-                               pokemonId <= Pokemon.kantoLimit {
+                            if let pokemonId = pokemonResult.pokemon.url.extractedIdFromUrl {
                                 if let pokemon = pokemons.first(where: { $0.id == pokemonId }) {
                                     pokemon.feedTypes(with: response, and: pokemonResult)
                                 } else {

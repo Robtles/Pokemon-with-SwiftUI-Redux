@@ -43,7 +43,7 @@ struct SlidingModalViewModifier: ViewModifier {
                 )
                 VStack {
                     if presented {
-                        modal.body
+                        modal.body(visibilityParameter: $presented)
                             .transition(.move(edge: .bottom))
                     }
                 }
@@ -64,53 +64,5 @@ struct SlidingModalViewModifier: ViewModifier {
     init(_ modal: Modal, presented: Binding<Bool>) {
         self.modal = modal
         self._presented = presented
-    }
-}
-
-// MARK: - Sliding Modal View Modifier
-/// This component displays content in its superview with a slide from bottom animation
-struct SlidingModalPokemonViewModifier: ViewModifier {
-    // MARK: Instance Properties
-    /// The passed `Pokemon` container
-    @EnvironmentObject var pokemonContainer: PokemonContainer
-    
-    /// The id of the `Pokemon` to show
-    var pokemonId: Int?
-    /// Defines if this view should appear
-    @Binding var presented: Bool
-    
-    // MARK: View Properties
-    func body(content: Content) -> some View {
-        content.overlay(
-            ZStack {
-                VStack {
-                    if presented {
-                        Color.black.opacity(0.8)
-                            .transition(.opacity)
-                    }
-                }
-                .animation(
-                    .easeInOut(duration: 0.25),
-                    value: presented
-                )
-                VStack {
-                    if presented {
-                        PokemonView(pokemonId: pokemonId)
-                            .transition(.move(edge: .bottom))
-                            .environmentObject(pokemonContainer)
-                    }
-                }
-                .animation(
-                    .spring()
-                        .delay(0.3),
-                    value: presented
-                )
-            }
-            .frame(
-                maxWidth: .infinity,
-                maxHeight: .infinity
-            )
-            .ignoresSafeArea()
-        )
     }
 }

@@ -8,15 +8,44 @@
 import Foundation
 
 // MARK: - Pokemon Container
-/// A observable container that will be able
+/// A observable coordinator that will be able
 /// to dispatch any update to the views
-class PokemonContainer: ObservableObject {
+class PokemonCoordinator: ObservableObject {
     // MARK: - Instance Properties
+    /// The id of the `Pokemon` to display in the Pokemon view
+    @Published var pokemonId: Int?
+    /// The list of Pokemons
     @Published var pokemons: [Pokemon]
     
     // MARK: - Init Methods
     init(_ pokemons: [Pokemon] = []) {
         self.pokemons = pokemons
+    }
+    
+    // MARK: - Methods
+    /// Loads all the Pokemons from the API and adds a completion block
+    func loadAllPokemons(_ completion: @escaping () -> Void) {
+        PokemonService.fetchAllPokemons { result in
+            completion()
+            switch result {
+            case .success(let pokemons):
+                self.pokemons = pokemons
+            default:
+                break
+            }
+        }
+    }
+    
+    /// Loads a Pokemon with a specific id
+    func load(pokemonWithId id: Int) {
+        PokemonService.fetch(pokemonWithId: id) { pokemon in
+            if let pokemonIndex = self.pokemons.firstIndex(where: { $0.id == id }) {
+                self.pokemons[pokemonIndex] = pokemon
+            } else {
+                self.pokemons.append(pokemon)
+                self.pokemons.sort(by: { $0.id < $1.id })
+            }
+        }
     }
 }
 
@@ -39,9 +68,10 @@ class Pokemon: Identifiable, Hashable {
         return result
     }
     
-    // MARK: Static Properties
-    /// The limit to fetch only Kanto Pokemons
-    static let kantoLimit = 151
+    var viewImageStringURL: String {
+        return "https://raw.githubusercontent.com/" +
+            "PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/\(id).gif"
+    }
     
     // MARK: Instance Properties
     /// A list of the potential Pokemon abilities
@@ -49,7 +79,7 @@ class Pokemon: Identifiable, Hashable {
     /// This Pokemon English species description
     var description: String?
     /// The Pokemon chain of evolutions
-    var evolutionChain: PokemonEvolutionChain?
+    var evolution: PokemonEvolution?
     /// The Pokemon height in decimeters
     var height: Double?
     /// The Pokemon id (index Kanto's Pokedex)

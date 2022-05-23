@@ -19,19 +19,16 @@ struct PokemonList: View {
     
     // MARK: Computed Properties
     private var pokemons: [Pokemon] {
-        pokemonContainer.pokemons
+        pokemonCoordinator.pokemons
     }
     
     // MARK: Instance Properties
-    /// Contains all the `Pokemon` and will broadcast any info update
-    @StateObject var pokemonContainer = PokemonContainer()
-    
+    /// The Pokemons container
+    @EnvironmentObject var pokemonCoordinator: PokemonCoordinator
     /// If the list should present a `Pokemon`
     @State private var isPresentingPokemon: Bool = false
     /// If the view is in a loading state
     @State private var loading: Bool = true
-    /// The id of the tapped `Pokemon` to show
-    @State private var pokemonShownId: Int?
 
     // MARK: View Properties
     var body: some View {
@@ -62,23 +59,15 @@ struct PokemonList: View {
         .preferredColorScheme(.dark)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                PokemonService.fetchAllPokemons { result in
-                    switch result {
-                    case .success(let pokemonResult):
-                        pokemonContainer.pokemons = pokemonResult
-                        loading = false
-                    case .failure:
-                        break
-                    }
+                pokemonCoordinator.loadAllPokemons {
+                    loading = false
                 }
             }
         }
         // The loading overview
         .modifier(LoadingView(loading: $loading))
         // The Pokemon modal
-        .showModal(.pokemonView(pokemonId: pokemonShownId), if: $isPresentingPokemon)
-        // Passing the container to the next views in hierarchy
-        .environmentObject(pokemonContainer)
+        .showModal(.pokemonView, if: $isPresentingPokemon)
     }
     
     // MARK: View Methods
@@ -87,13 +76,9 @@ struct PokemonList: View {
     /// led to unexpected behaviours (i.e. this not being called)
     /// - Parameter id: The Pokemon Kanto `id`
     private func presentAndFetchInformationOfPokemonWithId(_ id: Int) {
-        pokemonShownId = id
         isPresentingPokemon = true
-        PokemonService.fetch(pokemonWithId: id) { pokemon in
-            if let pokemonIndex = pokemonContainer.pokemons.firstIndex(where: { $0.id == id }) {
-                pokemonContainer.pokemons[pokemonIndex] = pokemon
-            }
-        }
+        pokemonCoordinator.pokemonId = id
+        pokemonCoordinator.load(pokemonWithId: id)
     }
 }
 
@@ -101,7 +86,7 @@ struct PokemonList: View {
 struct PokemonList_Previews: PreviewProvider {
     static var previews: some View {
         PokemonList()
-            .environmentObject(PokemonContainer([
+            .environmentObject(PokemonCoordinator([
                 pokemonSimpleSampleBulbasaur,
                 pokemonFullSampleCaterpie
             ]))

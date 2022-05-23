@@ -7,27 +7,25 @@
 
 import Foundation
 
-// MARK: - Pokemon Evolution Chain
-/// Describes a first generation Pokemon evolution chain
-/// with the initial Pokemon in the chain and all its futher evolutions
-struct PokemonEvolutionChain {
-    /// The initial Pokemon in the evolution chain
-    let initialPokemon: (id: Int?, name: String?)
-    /// The Pokemons that come after in this chain
-    let evolutions: [PokemonEvolution]
-}
-
 // MARK: - Pokemon Evolution
 /// Describes a Pokemon chain of eventual evolutions
 struct PokemonEvolution {
-    // MARK: Properties
+    // MARK: Computed Properties
+    func chain() -> [[PokemonEvolution]] {
+        guard !evolutions.isEmpty else {
+            return [[self]]
+        }
+        return evolutions.flatMap { $0.chain() }.map { [self] + $0 }
+    }
+    
+    // MARK: Instance Properties
     /// The Pokemon base information - id and name
     let information: (id: Int, name: String)
     /// The evolution type
     let type: PokemonEvolutionType
     /// This evolution possible evolutions
     let evolutions: [PokemonEvolution]
-    
+
     // MARK: Init Methods
     init(
         information: (id: Int, name: String),
@@ -39,12 +37,12 @@ struct PokemonEvolution {
         self.evolutions = evolutions
     }
     
+    // MARK: Static Methods
     /// Tries to create a `PokemonEvolution` object from a JSON evolution result chunk
     /// - Parameter evolvesTo: The JSON result chunk
     /// - Returns: The resulting `PokemonEvolution` (or nil if nothing found)
     static func from(_ evolvesTo: PokemonEvolutionChainResult) -> PokemonEvolution? {
         guard let id = evolvesTo.species.url.extractedIdFromUrl,
-              id <= Pokemon.kantoLimit,
               let firstEvolutionDetails = evolvesTo.evolutionDetails.first,
               let type = PokemonEvolutionType.from(firstEvolutionDetails) else {
             return nil
@@ -56,5 +54,11 @@ struct PokemonEvolution {
                 PokemonEvolution.from($0)
             }
         )
+    }
+}
+
+extension Array where Element == PokemonEvolution {
+    var id: String {
+        compactMap { "\($0.information.id)" }.joined()
     }
 }

@@ -25,7 +25,7 @@ The main object of the model will be of course the one representing a `Pokemon`.
 
 Some subtypes will also exist and evolve to follow the design needs: `PokemonType`, `PokemonStat`, `PokemonEvolutionItem` and `PokemonEvolutionType`.
 
-The id of the Pokemons will be inferred at first (**I will only focus on the first 151 Pokemon of Kanto generation**). The image URLs will be inferred from the Pokemon ids.
+The id of the Pokemons will be inferred at first. The image URLs will be inferred from the Pokemon ids.
 
 ## API
 

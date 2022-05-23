@@ -37,6 +37,7 @@ struct PokemonEvolutionDetailsResult: Codable {
     // MARK: Coding Keys
     enum CodingKeys: String, CodingKey {
         case item = "item"
+        case minHappiness = "min_happiness"
         case minLevel = "min_level"
         case trigger = "trigger"
     }
@@ -44,6 +45,8 @@ struct PokemonEvolutionDetailsResult: Codable {
     // MARK: Properties
     /// The item that is required for the Pokemon to evolve
     var item: PokemonEvolutionDetailsItemResult?
+    /// If this Pokemon evolves with a minimum level of happiness
+    var minHappiness: Int?
     /// The minimum required level of the evolving Pokemon species to evolve into this Pokemon species
     var minLevel: Int?
     /// The type of event that triggers evolution into this Pokemon species

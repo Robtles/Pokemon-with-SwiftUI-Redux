@@ -16,6 +16,29 @@ let pokemonSimpleSampleVenusaur = Pokemon(id: 3, name: "Venusaur", types: [.gras
 let pokemonSimpleSamplePikachu = Pokemon(id: 25, name: "Pikachu", types: [.electric])
 
 // Full Pokemon (for view purposes)
+var pokemonFullSampleChansey: Pokemon {
+    let pokemon = Pokemon(id: 113, name: "Chansey", types: [.normal])
+    pokemon.description = "A rare and elusive Pokémon that is said\n" +
+        "to bring happiness to those who manage to get it."
+    pokemon.height = 1.1
+    pokemon.weight = 34.6
+    pokemon.abilities = ["Healer", "Serene Grace"]
+    pokemon.stats = [
+        .healthPoints: 250,
+        .attack: 5,
+        .defense: 5,
+        .specialAttack: 35,
+        .specialDefense: 105,
+        .speed: 50
+    ]
+    pokemon.evolution = PokemonEvolution(
+        information: (id: 113, name: "Chansey"),
+        type: .initial,
+        evolutions: []
+    )
+    return pokemon
+}
+
 var pokemonFullSampleCaterpie: Pokemon {
     let pokemon = Pokemon(id: 10, name: "Caterpie", types: [.bug])
     pokemon.description = "When several of these pokémon gather,\n" +
@@ -31,8 +54,9 @@ var pokemonFullSampleCaterpie: Pokemon {
         .specialDefense: 20,
         .speed: 45
     ]
-    pokemon.evolutionChain = PokemonEvolutionChain(
-        initialPokemon: (id: 10, name: "Caterpie"),
+    pokemon.evolution = PokemonEvolution(
+        information: (id: 10, name: "Caterpie"),
+        type: .initial,
         evolutions: [
             PokemonEvolution(
                 information: (id: 11, name: "Metapod"),
@@ -65,8 +89,9 @@ var pokemonFullSampleEevee: Pokemon {
         .specialDefense: 65,
         .speed: 55
     ]
-    pokemon.evolutionChain = PokemonEvolutionChain(
-        initialPokemon: (id: 133, name: "Eevee"),
+    pokemon.evolution = PokemonEvolution(
+        information: (id: 133, name: "Eevee"),
+        type: .initial,
         evolutions: [
             PokemonEvolution(
                 information: (id: 134, name: "Vaporeon"),
@@ -88,9 +113,13 @@ var pokemonFullSampleEevee: Pokemon {
     return pokemon
 }
 
-var samplePokemonContainer = PokemonContainer([
-    pokemonSimpleSampleBulbasaur,
-    pokemonFullSampleCaterpie,
-    pokemonFullSampleEevee
-])
+func samplePokemonCoordinator(withSelectedPokemonId id: Int) -> PokemonCoordinator {
+    let container = PokemonCoordinator([
+        pokemonSimpleSampleBulbasaur,
+        pokemonFullSampleCaterpie,
+        pokemonFullSampleEevee
+    ])
+    container.pokemonId = id
+    return container
+}
 #endif

@@ -12,6 +12,7 @@ extension Style {
     // MARK: Type Properties
     private struct FontName {
         static let bold = "Outfit-Bold"
+        static let regular = "Outfit-Regular"
         static let semibold = "Outfit-SemiBold"
     }
     
@@ -19,6 +20,10 @@ extension Style {
         // MARK: Font Getters
         static func bold(sized: Double) -> SwiftUI.Font {
             return SwiftUI.Font.custom(FontName.bold, size: sized)
+        }
+        
+        static func regular(sized: Double) -> SwiftUI.Font {
+            return SwiftUI.Font.custom(FontName.regular, size: sized)
         }
         
         static func semibold(sized: Double) -> SwiftUI.Font {

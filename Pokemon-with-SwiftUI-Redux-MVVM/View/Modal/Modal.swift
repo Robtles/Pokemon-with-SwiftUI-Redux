@@ -10,15 +10,15 @@ import SwiftUI
 // MARK: - Modal
 /// This should enumerate all the possible modals of the app,
 /// and their corresponding view.
-enum Modal: View {
+enum Modal {
     // MARK: Cases
-    case pokemonView(pokemonId: Int?)
+    case pokemonView
     
     // MARK: View Properties
-    var body: some View {
+    func body(visibilityParameter: Binding<Bool>) -> some View {
         switch self {
-        case .pokemonView(let pokemonId):
-            return PokemonView(pokemonId: pokemonId)
+        case .pokemonView:
+            return PokemonView(showing: visibilityParameter)
         }
     }
 }

@@ -6,6 +6,7 @@
 	<array>
 		<string>Outfit-Bold.ttf</string>
 		<string>Outfit-SemiBold.ttf</string>
+		<string>Outfit-Regular.ttf</string>
 	</array>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDarkContent</string>
