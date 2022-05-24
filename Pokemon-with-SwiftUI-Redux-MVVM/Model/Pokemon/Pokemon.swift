@@ -30,8 +30,7 @@ class Pokemon: Identifiable, Hashable {
         return result
     }
     
-    var viewImageStringURL: String {
-        
+    var viewImageStringURL: String {        
         return "https://raw.githubusercontent.com/" +
             "PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/\(id).gif"
     }

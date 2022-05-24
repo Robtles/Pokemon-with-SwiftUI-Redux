@@ -145,7 +145,7 @@ struct PokemonView: View {
                                 .font(Style.Font.bold(sized: 16.0))
                                 .padding(.top, 18)
                             PokemonEvolutionChainView(pokemonId: $pokemonId)
-                                .padding(.top, 12)
+                                .padding(.vertical, 12)
                         }
                     }
                 }
@@ -153,6 +153,18 @@ struct PokemonView: View {
                 
             }
             .padding(.top, 62)
+            .gesture(
+                DragGesture(
+                    minimumDistance: 0,
+                    coordinateSpace: .global
+                )
+                .onEnded { value in
+                    let verticalAmount = value.translation.height as CGFloat
+                    if verticalAmount > 0 {
+                        showing = false
+                    }
+                }
+            )
             /// Animated images aren't available for Pokemons with
             /// indexes higher than 649. We'll use static ones instead
             if let pokemon = pokemon {

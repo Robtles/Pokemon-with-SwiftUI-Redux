@@ -34,7 +34,7 @@ struct PokemonEvolutionChainView: View {
                         ForEach(evolutionChain, id: \.information.id) { evolution in
                             HStack(spacing: 0) {
                                 evolution.type.view
-                                KFImage(URL(string: Pokemon(evolution.information.id).viewImageStringURL))
+                                KFImage(URL(string: Pokemon(evolution.information.id).listImageStringURL))
                                     .frame(width: 62.0, height: 62.0)
                                     .padding(.trailing, 4)
                             }
