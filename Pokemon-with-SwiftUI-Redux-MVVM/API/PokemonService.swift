@@ -20,19 +20,19 @@ enum PokemonService {
     private static let typeCount = 18
     
     // MARK: Cases
-    /// Fetches the description of a specific Pokemon, identified by its index in Kanto's Pokedex
+    /// Fetches the description of a specific Pokemon, identified by its index in the Pokedex
     case description(id: Int)
     /// Fetches the eventual evolution chains of a specific Pokemon.
     /// Important note: the id is not the one of the Pokemon,
     /// it is to be found instead from the `species` endpoint first!
     case evolution(id: Int)
-    /// Fetches the description of a specific Pokemon species, identified by its index in Kanto's Pokedex
+    /// Fetches the description of a specific Pokemon species, identified by its index in the Pokedex
     case species(id: Int)
     /// Fetches the information of a given type. It also gives all the Pokemon which are of this type
     case type(id: Int)
 
     // MARK: Fetch Helper
-    /// Fetches all the 151 Pokemon of the Kanto region. This API only gets their name and types
+    /// Fetches all the 898 existing Pokemon. This API only gets their name and types
     /// - Parameter completion: The result, either the fetched `Pokemon` list or an error
     static func fetchAllPokemons(_ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
         var pokemons: Set<Pokemon> = []
@@ -46,7 +46,8 @@ enum PokemonService {
                     switch result {
                     case .success(let response):
                         response.pokemon.forEach { pokemonResult in
-                            if let pokemonId = pokemonResult.pokemon.url.extractedIdFromUrl {
+                            if let pokemonId = pokemonResult.pokemon.url.extractedIdFromUrl,
+                               pokemonId <= Pokemon.limit {
                                 if let pokemon = pokemons.first(where: { $0.id == pokemonId }) {
                                     pokemon.feedTypes(with: response, and: pokemonResult)
                                 } else {
@@ -71,7 +72,7 @@ enum PokemonService {
     /// species information, then its evolution chain info.
     /// `completion(pokemon)` is called after every API fetch result instead of waiting for the full data to return
     /// - Parameters:
-    ///   - id: The Pokemon identifier in Kanto's Pokedex
+    ///   - id: The Pokemon identifier in the Pokedex
     ///   - completion: The completion with the updated `Pokemon`
     static func fetch(
         pokemonWithId id: Int,
@@ -137,9 +138,9 @@ enum PokemonService {
         }
     }
 
-    /// Fetches the description of a Pokemon identified by its Kanto's Pokedex id
+    /// Fetches the description of a Pokemon identified by its Pokedex id
     /// - Parameters:
-    ///   - id: The Pokemon Kanto's id
+    ///   - id: The Pokemon id
     ///   - completion: The fetch result
     private static func fetchDescription(
         for id: Int,
@@ -164,9 +165,9 @@ enum PokemonService {
         }
     }
     
-    /// Fetches the description of a Pokemon species identified by its Kanto's Pokedex id
+    /// Fetches the description of a Pokemon species identified by its Pokedex id
     /// - Parameters:
-    ///   - id: The Pokemon Kanto's id
+    ///   - id: The Pokemon id
     ///   - completion: The fetch result
     private static func fetchSpecies(
         for id: Int,
@@ -205,7 +206,7 @@ enum PokemonService {
 }
 
 // MARK: - Moya TargetType Conformance
-extension PokemonService: TargetType {
+extension PokemonService: TargetType {    
     var baseURL: URL {
         URL(string: PokemonService.baseURL)!
     }

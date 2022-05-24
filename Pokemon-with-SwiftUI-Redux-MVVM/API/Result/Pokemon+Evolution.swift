@@ -51,6 +51,21 @@ struct PokemonEvolutionDetailsResult: Codable {
     var minLevel: Int?
     /// The type of event that triggers evolution into this Pokemon species
     var trigger: PokemonEvolutionDetailsTriggerResult?
+    
+    // MARK: Computed Properties
+    /// Tells if this evolution chain should be displayed in the Pokemon's view
+    var isValid: Bool {
+        switch PokemonEvolutionTypeTrigger(trigger?.name) {
+        case .levelUp:
+            return minLevel != nil || minHappiness != nil
+        case .trade:
+            return true
+        case .useItem:
+            return PokemonEvolutionItem(item?.name) != nil
+        default:
+            return false
+        }
+    }
 }
 
 // MARK: - Pokemon Evolution Details Item Result

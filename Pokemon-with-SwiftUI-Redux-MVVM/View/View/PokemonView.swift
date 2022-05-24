@@ -81,6 +81,7 @@ struct PokemonView: View {
                                     .font(Style.Font.regular(sized: 16.0))
                                     .foregroundColor(Style.Color.grayText)
                                     .padding(.top, 6)
+                                    .padding(.horizontal, 8)
                             } else {
                                 
                             }
@@ -152,11 +153,20 @@ struct PokemonView: View {
                 
             }
             .padding(.top, 62)
-            if let urlImageString = pokemon?.viewImageStringURL {
-                KFAnimatedImage(URL(string: urlImageString))
-                    .frame(width: 100, height: 100)
-            } else {
-                // Here replace with any placeholder image?
+            /// Animated images aren't available for Pokemons with
+            /// indexes higher than 649. We'll use static ones instead
+            if let pokemon = pokemon {
+                if pokemon.id > 649 {
+                    KFImage(URL(string: pokemon.listImageStringURL))
+                        .frame(width: 110, height: 110)
+                } else {
+                    if let urlImageString = pokemon.viewImageStringURL {
+                        KFAnimatedImage(URL(string: urlImageString))
+                            .frame(width: 100, height: 100)
+                    } else {
+                        // Here replace with any placeholder image?
+                    }
+                }
             }
         }
         .padding(.top, PokemonView.topMargin)

@@ -12,10 +12,13 @@ import Foundation
 struct PokemonEvolution {
     // MARK: Computed Properties
     func chain() -> [[PokemonEvolution]] {
-        guard !evolutions.isEmpty else {
+        guard !evolutions.isEmpty,
+                !evolutions.contains(where: { $0.information.id > Pokemon.limit }) else {
             return [[self]]
         }
-        return evolutions.flatMap { $0.chain() }.map { [self] + $0 }
+        return evolutions
+            .flatMap { $0.chain() }
+            .map { [self] + $0 }
     }
     
     // MARK: Instance Properties
@@ -43,7 +46,7 @@ struct PokemonEvolution {
     /// - Returns: The resulting `PokemonEvolution` (or nil if nothing found)
     static func from(_ evolvesTo: PokemonEvolutionChainResult) -> PokemonEvolution? {
         guard let id = evolvesTo.species.url.extractedIdFromUrl,
-              let firstEvolutionDetails = evolvesTo.evolutionDetails.first,
+              let firstEvolutionDetails = evolvesTo.evolutionDetails.first(where: { $0.isValid }),
               let type = PokemonEvolutionType.from(firstEvolutionDetails) else {
             return nil
         }

@@ -76,7 +76,7 @@ struct PokemonList: View {
     /// It both presents this `Pokemon` sheet and fetches its additional information.
     /// Note that I wanted to do it in `PokemonView.onAppear {}` first but it often
     /// led to unexpected behaviours (i.e. this not being called)
-    /// - Parameter id: The Pokemon Kanto `id`
+    /// - Parameter id: The Pokemon `id`
     private func presentAndFetchInformationOfPokemonWithId(_ id: Int) {
         isPresentingPokemon = true
         pokemonId = id

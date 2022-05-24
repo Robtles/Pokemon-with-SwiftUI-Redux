@@ -10,6 +10,10 @@ import Foundation
 // MARK: - Pokemon
 /// Represents a Pokemon
 class Pokemon: Identifiable, Hashable {
+    // MARK: Static Properties
+    /// Limit of the accepted Pokemon ids, to avoid strange forms
+    static let limit = 898
+    
     // MARK: Computed Properties
     var listImageStringURL: String {
         return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(id).png"
@@ -27,6 +31,7 @@ class Pokemon: Identifiable, Hashable {
     }
     
     var viewImageStringURL: String {
+        
         return "https://raw.githubusercontent.com/" +
             "PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/\(id).gif"
     }
@@ -40,7 +45,7 @@ class Pokemon: Identifiable, Hashable {
     var evolution: PokemonEvolution?
     /// The Pokemon height in decimeters
     var height: Double?
-    /// The Pokemon id (index Kanto's Pokedex)
+    /// The Pokemon Pokedex's id
     let id: Int
     /// The Pokemon English name
     var name: String?
@@ -53,7 +58,7 @@ class Pokemon: Identifiable, Hashable {
     
     // MARK: Init Methods
     /// Initializes a Pokemon from its id
-    /// - Parameter id: The Pokemon index in Kanto's Pokedex
+    /// - Parameter id: The Pokemon index in the Pokedex
     init(_ id: Int) {
         self.id = id
     }

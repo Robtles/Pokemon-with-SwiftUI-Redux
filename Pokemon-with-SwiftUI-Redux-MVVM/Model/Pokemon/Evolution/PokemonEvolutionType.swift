@@ -94,6 +94,7 @@ enum PokemonEvolutionTypeTrigger: String {
     // MARK: Cases
     case levelUp = "level-up"
     case trade = "trade"
+    case useItem = "use-item"
     
     // MARK: Init Methods
     init?(_ rawValue: String?) {
