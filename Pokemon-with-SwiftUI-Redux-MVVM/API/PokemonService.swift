@@ -73,32 +73,37 @@ enum PokemonService {
     /// `completion(pokemon)` is called after every API fetch result instead of waiting for the full data to return
     /// - Parameters:
     ///   - id: The Pokemon identifier in the Pokedex
-    ///   - completion: The completion with the updated `Pokemon`
+    ///   - completion: The completion with the updated `Pokemon` and which call was made (if no error)
     static func fetch(
         pokemonWithId id: Int,
-        _ completion: @escaping (Pokemon) -> Void
+        _ completion: @escaping (LoadState?, Pokemon) -> Void
     ) {
         let pokemon = Pokemon(id)
         PokemonService.fetchDescription(for: id) { result in
             switch result {
             case .success(let response):
+                completion(.description, pokemon)
                 pokemon.feed(with: response)
             default:
-                break
+                completion(nil, pokemon)
             }
-            completion(pokemon)
         }
         PokemonService.fetchSpecies(for: id) { result in
             switch result {
             case .success(let response):
+                completion(.species, pokemon)
                 pokemon.feed(with: response)
-                fetch(pokemon, evolutionChainWith: response) {
-                    completion($0)
+                fetch(pokemon, evolutionChainWith: response) { evolutionResult in
+                    switch evolutionResult {
+                    case .success(let pokemon):
+                        completion(.evolution, pokemon)
+                    default:
+                        completion(nil, pokemon)
+                    }
                 }
             default:
-                break
+                completion(nil, pokemon)
             }
-            completion(pokemon)
         }
     }
     
@@ -111,20 +116,20 @@ enum PokemonService {
     private static func fetch(
         _ pokemon: Pokemon,
         evolutionChainWith pokemonSpeciesResult: PokemonSpeciesResult,
-        _ completion: @escaping (Pokemon) -> Void
+        _ completion: @escaping (Result<Pokemon, Error>) -> Void
     ) {
         guard let evolutionChainId = pokemonSpeciesResult.evolutionChain.url.extractedIdFromUrl else {
-            completion(pokemon)
+            completion(.failure(PokemonAPIError.missingPokemonEvolutionChainId))
             return
         }
         PokemonService.fetchEvolutions(for: evolutionChainId) { evolutionChainResult in
             switch evolutionChainResult {
             case .success(let evolutionChainResponse):
                 pokemon.feed(with: evolutionChainResponse)
-            default:
-                break
+                completion(.success(pokemon))
+            case.failure(let error):
+                completion(.failure(error))
             }
-            completion(pokemon)
         }
     }
     

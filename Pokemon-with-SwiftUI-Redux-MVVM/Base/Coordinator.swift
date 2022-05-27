@@ -12,8 +12,8 @@ import Foundation
 /// to dispatch any update to the views
 class PokemonCoordinator: ObservableObject {
     // MARK: - Instance Properties
-    /// The id of the `Pokemon` to display in the Pokemon view
-//    @Published var pokemonId: Int?
+    /// The loading information for each Pokemon
+    @Published var pokemonLoadingInformation: [Int: [LoadState: Bool]] = [:]
     /// The list of Pokemons
     @Published var pokemons: [Pokemon]
     
@@ -28,8 +28,14 @@ class PokemonCoordinator: ObservableObject {
         PokemonService.fetchAllPokemons { result in
             completion()
             switch result {
-            case .success(let pokemons):
-                self.pokemons = pokemons
+            case .success(let pokemonResult):
+                self.pokemonLoadingInformation = pokemonResult.map { $0.id }
+                    .reduce(into: [:], { $0[$1] = [
+                        .description: false,
+                        .evolution: false,
+                        .species: false
+                    ] })
+                self.pokemons = pokemonResult
             default:
                 break
             }
@@ -38,7 +44,10 @@ class PokemonCoordinator: ObservableObject {
     
     /// Loads a Pokemon with a specific id
     func load(pokemonWithId id: Int) {
-        PokemonService.fetch(pokemonWithId: id) { pokemon in
+        PokemonService.fetch(pokemonWithId: id) { loadState, pokemon in
+            if let loadState = loadState {
+                self.pokemonLoadingInformation[pokemon.id]?[loadState] = true
+            }
             if let pokemonIndex = self.pokemons.firstIndex(where: { $0.id == id }) {
                 self.pokemons[pokemonIndex] = pokemon
             } else {

@@ -15,6 +15,8 @@ enum PokemonAPIError: Error, CustomStringConvertible {
     case badStatusCode(Int)
     /// JSON content decoding failed
     case contentDecodingFailed
+    /// Missing Pokemon evolution chain id for API call
+    case missingPokemonEvolutionChainId
     
     // MARK: Computed Properties
     var description: String {
@@ -22,7 +24,9 @@ enum PokemonAPIError: Error, CustomStringConvertible {
         case .badStatusCode(let code):
             return "Bad status code: \(code)"
         case .contentDecodingFailed:
-            return "Content decoding failed."
+            return "Content decoding failed"
+        case .missingPokemonEvolutionChainId:
+            return "Missing Pokemon evolution chain id for API call"
         }
     }
 }

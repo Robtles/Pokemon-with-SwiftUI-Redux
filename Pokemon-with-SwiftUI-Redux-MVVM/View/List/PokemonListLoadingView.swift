@@ -1,5 +1,5 @@
 //
-//  LoadingView.swift
+//  PokemonListLoadingView.swift
 //  Pokemon-with-SwiftUI-Redux-MVVM
 //
 //  Created by Rob on 17/05/2022.
@@ -8,8 +8,8 @@
 import SwiftUI
 
 // MARK: - Loading View
-/// The view to display while data is being fetched
-struct LoadingView: ViewModifier {
+/// The view to display while data is being fetched in PokemonList view
+struct PokemonListLoadingView: ViewModifier {
     // MARK: Instance Properties
     @State private var isAnimating = false
     @Binding var loading: Bool
@@ -49,7 +49,7 @@ struct LoadingView: ViewModifier {
 }
 
 #if DEBUG
-struct LoadingView_Previews: PreviewProvider {
+struct PokemonListLoadingView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center) {
             Color.white

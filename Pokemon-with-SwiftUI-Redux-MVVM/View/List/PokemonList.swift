@@ -31,7 +31,7 @@ struct PokemonList: View {
     @State private var loading: Bool = true
     /// The selected Pokemon id
     @State private var pokemonId: Int?
-    
+
     // MARK: View Properties
     var body: some View {
         ZStack(alignment: .top) {
@@ -67,7 +67,7 @@ struct PokemonList: View {
             }
         }
         // The loading overview
-        .modifier(LoadingView(loading: $loading))
+        .modifier(PokemonListLoadingView(loading: $loading))
         // The Pokemon modal
         .showModal(.pokemonView(pokemonId: $pokemonId), if: $isPresentingPokemon)
     }

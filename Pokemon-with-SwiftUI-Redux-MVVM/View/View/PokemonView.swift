@@ -17,7 +17,7 @@ struct PokemonView: View {
     
     // MARK: Instance Properties
     /// The passed `Pokemon` container
-    @EnvironmentObject var pokemonCoordinator: PokemonCoordinator    
+    @EnvironmentObject var pokemonCoordinator: PokemonCoordinator
     /// The selected Pokemon id
     @Binding var pokemonId: Int?
     /// The variable that handles the view visibility
@@ -75,16 +75,13 @@ struct PokemonView: View {
                             Text("Pokedex entry")
                                 .font(Style.Font.bold(sized: 16.0))
                                 .padding(.top, 18)
-                            if let pokemonDescription = pokemon?.description {
-                                Text(pokemonDescription)
-                                    .multilineTextAlignment(.center)
-                                    .font(Style.Font.regular(sized: 16.0))
-                                    .foregroundColor(Style.Color.grayText)
-                                    .padding(.top, 6)
-                                    .padding(.horizontal, 8)
-                            } else {
-                                
-                            }
+                            Text(pokemon?.description ?? "")
+                                .multilineTextAlignment(.center)
+                                .font(Style.Font.regular(sized: 16.0))
+                                .foregroundColor(Style.Color.grayText)
+                                .padding(.top, 6)
+                                .padding(.horizontal, 8)
+                                .displayLoadingView(if: !loadingInformation(for: .species))
                             HStack {
                                 Spacer()
                                 Text("Height")
@@ -99,16 +96,10 @@ struct PokemonView: View {
                             }
                             .padding(.top, 16)
                             HStack {
-                                if let pokemonHeight = pokemon?.height {
-                                    GrayBadgeView(text: "\(pokemonHeight)m")
-                                } else {
-                                    
-                                }
-                                if let pokemonWeight = pokemon?.weight {
-                                    GrayBadgeView(text: "\(pokemonWeight)kg")
-                                } else {
-                                    
-                                }
+                                GrayBadgeView(text: "\(pokemon?.height ?? 0)m")
+                                    .displayLoadingView(if: !loadingInformation(for: .description))
+                                GrayBadgeView(text: "\(pokemon?.weight ?? 0)kg")
+                                    .displayLoadingView(if: !loadingInformation(for: .description))
                             }
                             .padding(.horizontal, 16.0)
                             .padding(.top, 8.0)
@@ -122,6 +113,7 @@ struct PokemonView: View {
                             }
                             .padding(.horizontal, 16.0)
                             .padding(.top, 8.0)
+                            .displayLoadingView(if: !loadingInformation(for: .description))
                         }
                         VStack(spacing: 0) {
                             Text("Stats")
@@ -141,16 +133,17 @@ struct PokemonView: View {
                                 )
                             }
                             .padding(.horizontal, 8.0)
+                            .displayLoadingView(if: !loadingInformation(for: .description))
                             Text("Evolution")
                                 .font(Style.Font.bold(sized: 16.0))
                                 .padding(.top, 18)
                             PokemonEvolutionChainView(pokemonId: $pokemonId)
                                 .padding(.vertical, 12)
+                                .displayLoadingView(if: !loadingInformation(for: .evolution))
                         }
                     }
                 }
                 .padding(.top, 50.0)
-                
             }
             .padding(.top, 62)
             .gesture(
@@ -175,13 +168,24 @@ struct PokemonView: View {
                     if let urlImageString = pokemon.viewImageStringURL {
                         KFAnimatedImage(URL(string: urlImageString))
                             .frame(width: 100, height: 100)
-                    } else {
+                    } else {                        
                         // Here replace with any placeholder image?
                     }
                 }
             }
         }
         .padding(.top, PokemonView.topMargin)
+    }
+    
+    // MARK: View Methods
+    /// Gives the loading status for a given kind of fetchable information
+    /// - Parameter loadState: The kind of information to load
+    /// - Returns: The status for this kind of information
+    private func loadingInformation(for loadState: LoadState) -> Bool {
+        guard let id = pokemon?.id else {
+            return false
+        }
+        return pokemonCoordinator.pokemonLoadingInformation[id]?[loadState] ?? false
     }
 }
 
