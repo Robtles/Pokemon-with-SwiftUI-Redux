@@ -52,6 +52,7 @@ struct PokemonEvolutionChainView: View {
     }
 }
 
+#if DEBUG
 struct PokemonEvolutionChainView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
@@ -68,3 +69,4 @@ struct PokemonEvolutionChainView_Previews: PreviewProvider {
         .ignoresSafeArea()
     }
 }
+#endif

@@ -25,6 +25,7 @@ struct GrayBadgeView: View {
     }
 }
 
+#if DEBUG
 struct GrayBadgeView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
@@ -35,3 +36,4 @@ struct GrayBadgeView_Previews: PreviewProvider {
         .ignoresSafeArea()
     }
 }
+#endif

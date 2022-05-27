@@ -19,57 +19,79 @@ struct PokemonList: View {
     
     // MARK: Computed Properties
     private var pokemons: [Pokemon] {
-        pokemonCoordinator.pokemons
+        let typed = typedText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        return typedText.isEmpty ?
+            pokemonCoordinator.pokemons :
+        pokemonCoordinator.pokemons.filter {
+            ($0.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+                .contains(typed)
+        }
     }
     
     // MARK: Instance Properties
     /// The Pokemons container
     @EnvironmentObject var pokemonCoordinator: PokemonCoordinator
+    
     /// If the list should present a `Pokemon`
     @State private var isPresentingPokemon: Bool = false
     /// If the view is in a loading state
-    @State private var loading: Bool = true
+    @State private var loading: Bool = false
     /// The selected Pokemon id
     @State private var pokemonId: Int?
+    /// Variable tracking the focus state of the text field
+    @FocusState private var textFieldIsFocused: Bool
+    /// The text typed in the text field
+    @State private var typedText: String = ""
 
     // MARK: View Properties
     var body: some View {
         ZStack(alignment: .top) {
             Style.Color.listBackground
                 .ignoresSafeArea()
-            ScrollView {
-                LazyVGrid(columns: PokemonList.preference) {
-                    ForEach(pokemons.dropLast(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
-                        PokemonListRow(pokemon: pokemon)
-                            .onTapGesture {
-                                presentAndFetchInformationOfPokemonWithId(pokemon.id)
-                            }
+            VStack(spacing: 0) {
+                CustomTextField(
+                    placeholderText: "Type a Pokemon name...",
+                    text: $typedText
+                )
+                .focused($textFieldIsFocused)
+                .padding(.horizontal, 16.0)
+                .padding(.top, 16.0)
+                ScrollView {
+                    LazyVGrid(columns: PokemonList.preference) {
+                        ForEach(pokemons.dropLast(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
+                            PokemonListRow(pokemon: pokemon)
+                                .onTapGesture {
+                                    presentAndFetchInformationOfPokemonWithId(pokemon.id)
+                                }
+                        }
+                    }
+                    LazyHStack {
+                        ForEach(pokemons.suffix(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
+                            PokemonListRow(pokemon: pokemon)
+                                .onTapGesture {
+                                    presentAndFetchInformationOfPokemonWithId(pokemon.id)
+                                }
+                        }
                     }
                 }
-                LazyHStack {
-                    ForEach(pokemons.suffix(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
-                        PokemonListRow(pokemon: pokemon)
-                            .onTapGesture {
-                                presentAndFetchInformationOfPokemonWithId(pokemon.id)
-                            }
-                    }
-                }
+                .padding(.horizontal, 6)
             }
-            .padding(.horizontal, 6)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .preferredColorScheme(.dark)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                pokemonCoordinator.loadAllPokemons {
-                    loading = false
-                }
+            pokemonCoordinator.loadAllPokemons {
+                loading = false
             }
         }
         // The loading overview
         .modifier(PokemonListLoadingView(loading: $loading))
         // The Pokemon modal
         .showModal(.pokemonView(pokemonId: $pokemonId), if: $isPresentingPokemon)
+        // Tap everywhere to dismiss keyboard
+        .onTapGesture {
+            textFieldIsFocused = false
+        }
     }
     
     // MARK: View Methods
@@ -78,6 +100,7 @@ struct PokemonList: View {
     /// led to unexpected behaviours (i.e. this not being called)
     /// - Parameter id: The Pokemon `id`
     private func presentAndFetchInformationOfPokemonWithId(_ id: Int) {
+        textFieldIsFocused = false
         isPresentingPokemon = true
         pokemonId = id
         pokemonCoordinator.load(pokemonWithId: id)

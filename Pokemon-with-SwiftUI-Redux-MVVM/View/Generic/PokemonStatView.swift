@@ -77,6 +77,7 @@ struct PokemonStatView: View {
     }
 }
 
+#if DEBUG
 struct PokemonStatView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
@@ -90,3 +91,4 @@ struct PokemonStatView_Previews: PreviewProvider {
         .ignoresSafeArea()
     }
 }
+#endif

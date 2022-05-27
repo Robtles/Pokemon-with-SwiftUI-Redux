@@ -51,27 +51,15 @@ struct PokemonView: View {
                 ScrollView {
                     VStack(alignment: .center, spacing: 0) {
                         VStack(spacing: 0) {
-                            if let pokemonId = pokemon?.id {
-                                Text("N° \(pokemonId)")
-                                    .font(Style.Font.bold(sized: 12.0))
-                                    .foregroundColor(Style.Color.grayText)
-                            } else {
-                                
-                            }
-                            if let pokemonName = pokemon?.name {
-                                Text(pokemonName)
-                                    .padding(.top, 6)
-                                    .font(Style.Font.bold(sized: 24.0))
-                                    .foregroundColor(Style.Color.blackText)
-                            } else {
-                                
-                            }
-                            if let pokemonTypes = pokemon?.sortedTypes {
-                                PokemonTypeBadgeContainerView(pokemonTypes: pokemonTypes)
-                                    .padding(.top, 8)
-                            } else {
-                                
-                            }
+                            Text("N° \(pokemon?.id ?? 0)")
+                                .font(Style.Font.bold(sized: 12.0))
+                                .foregroundColor(Style.Color.grayText)
+                            Text(pokemon?.name ?? "")
+                                .padding(.top, 6)
+                                .font(Style.Font.bold(sized: 24.0))
+                                .foregroundColor(Style.Color.blackText)
+                            PokemonTypeBadgeContainerView(pokemonTypes: pokemon?.sortedTypes ?? [])
+                                .padding(.top, 8)
                             Text("Pokedex entry")
                                 .font(Style.Font.bold(sized: 16.0))
                                 .padding(.top, 18)
@@ -163,13 +151,22 @@ struct PokemonView: View {
             if let pokemon = pokemon {
                 if pokemon.id > 649 {
                     KFImage(URL(string: pokemon.listImageStringURL))
+                        .placeholder {
+                            Style.image(.unknownPlaceholder)
+                                .frame(width: 80, height: 80)
+                        }
                         .frame(width: 110, height: 110)
                 } else {
                     if let urlImageString = pokemon.viewImageStringURL {
                         KFAnimatedImage(URL(string: urlImageString))
+                            .placeholder {
+                                Style.image(.unknownPlaceholder)
+                                    .frame(width: 80, height: 80)
+                            }
                             .frame(width: 100, height: 100)
                     } else {                        
-                        // Here replace with any placeholder image?
+                        Style.image(.unknownPlaceholder)
+                            .frame(width: 80, height: 80)
                     }
                 }
             }
