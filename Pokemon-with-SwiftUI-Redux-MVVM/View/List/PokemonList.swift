@@ -35,7 +35,7 @@ struct PokemonList: View {
     /// If the list should present a `Pokemon`
     @State private var isPresentingPokemon: Bool = false
     /// If the view is in a loading state
-    @State private var loading: Bool = false
+    @State private var loading: Bool = true
     /// The selected Pokemon id
     @State private var pokemonId: Int?
     /// Variable tracking the focus state of the text field
@@ -60,6 +60,7 @@ struct PokemonList: View {
                     LazyVGrid(columns: PokemonList.preference) {
                         ForEach(pokemons.dropLast(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
                             PokemonListRow(pokemon: pokemon)
+                                .frame(width: (UIScreen.main.bounds.width / 2) - 16)
                                 .onTapGesture {
                                     presentAndFetchInformationOfPokemonWithId(pokemon.id)
                                 }
@@ -68,6 +69,7 @@ struct PokemonList: View {
                     LazyHStack {
                         ForEach(pokemons.suffix(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
                             PokemonListRow(pokemon: pokemon)
+                                .frame(width: (UIScreen.main.bounds.width / 2) - 16)
                                 .onTapGesture {
                                     presentAndFetchInformationOfPokemonWithId(pokemon.id)
                                 }
