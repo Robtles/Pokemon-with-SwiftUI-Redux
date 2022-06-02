@@ -1,5 +1,7 @@
 # Pokemon-with-SwiftUI-Redux
 
+<img src="https://user-images.githubusercontent.com/25252204/171649341-cde3f4cd-06b6-4f85-ba93-58c8b85c2389.png" width="600" />
+
 This is a simple, playground project where I will try to build a Pokedex app. This app will use the combine the following patterns and frameworks:
 - [SwiftUI](https://developer.apple.com/xcode/swiftui/) (targeting iOS 14.0)
 - [Redux](https://redux.js.org) for app state management
