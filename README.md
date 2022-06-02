@@ -1,9 +1,9 @@
-# Pokemon-with-SwiftUI-Redux-MVVM
+# Pokemon-with-SwiftUI-Redux
 
 This is a simple, playground project where I will try to build a Pokedex app. This app will use the combine the following patterns and frameworks:
 - [SwiftUI](https://developer.apple.com/xcode/swiftui/) (targeting iOS 14.0)
 - [Redux](https://redux.js.org) for app state management
-- [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) as the main pattern
+- ~~[MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel)~~
 
 Every step will be documented in this file.
 
@@ -48,3 +48,9 @@ The project then contains the usual Redux pattern elements:
 - **State**: represents the app state, with any update being dispatched to the views.
 - **Reducer**: contains the reducer functions which is where the app logic is kept and the state values updated.
 - **Action**: the possible actions which may update the app state. Note that there are both `Action` objects and `AsyncAction` objects for asynchronous purposes (usually API calls).
+
+## ~~MVVM~~
+
+The initial plan was to also use MVVM in this project. However, after some thinking and research, I decided not to do so as I think it will only add complexity and will probably not benefit a SwiftUI project.
+
+See: https://developer.apple.com/forums/thread/699003
