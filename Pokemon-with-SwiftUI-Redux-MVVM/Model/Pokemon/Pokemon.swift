@@ -93,3 +93,10 @@ class Pokemon: Identifiable, Hashable {
         hasher.combine(id)
     }
 }
+
+/// A missing Pokemon sample if needed
+let sampleMissingPokemon = Pokemon(
+    id: 0,
+    name: "No information",
+    types: []
+)

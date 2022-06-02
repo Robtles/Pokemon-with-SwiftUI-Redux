@@ -12,6 +12,7 @@ Every step will be documented in this file.
 - `SwiftLint`: to ensure keeping a clean syntax, I will use SwiftLint as a dependency. As it does not handle Swift Package Manager yet, I will use CocoaPods instead to add it to the project.
 - `Moya`: all the API requests will be simplified with Moya, which itself also embeds `Alamofire` - see API section below.
 - `Kingfisher`: will be used for image downloading/caching.
+- `SwiftUIFlux`: serves as Redux's implementation.
 
 ## Expected design
 
@@ -37,4 +38,13 @@ Two main calls are to be made, each of them corresponding to the two main views 
 
 Moya dependency will help a lot to simplify these calls, it will return a response with some JSON content that I will map into Swift structs thanks to the [Codable](https://developer.apple.com/documentation/swift/codable) protocol.
 
-## Coming next... Adding the Redux vibe to the project
+## Redux
+
+I choosed to use [Dimillian](https://github.com/Dimillian)'s implementation of Redux in SwiftUI: [SwiftUIFlux](https://github.com/Dimillian/SwiftUIFlux). The main changes are the following:
+- The main view is embedded in a `StoreProvider` with the app store passed as a parameter. Any update to the store will then be automatically reflected on the views.
+- The views whose content is related to the store (`PokemonList`, `PokemonView`...) will be `ConnectedView` objects for a better separation of concerns.
+
+The project then contains the usual Redux pattern elements:
+- **State**: represents the app state, with any update being dispatched to the views.
+- **Reducer**: contains the reducer functions which is where the app logic is kept and the state values updated.
+- **Action**: the possible actions which may update the app state. Note that there are both `Action` objects and `AsyncAction` objects for asynchronous purposes (usually API calls).

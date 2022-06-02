@@ -7,14 +7,24 @@
 
 import Kingfisher
 import SwiftUI
+import SwiftUIFlux
 
 // MARK: - Pokemon List Row View
-struct PokemonListRow: View {
+struct PokemonListRow: ConnectedView {
+    // MARK: Flux
+    struct Props {
+        let pokemon: Pokemon
+    }
+    
+    func map(state: AppState, dispatch: @escaping DispatchFunction) -> Props {
+        return Props(pokemon: state.pokemonState.pokemons.first(where: { $0.id == pokemonId }) ?? sampleMissingPokemon)
+    }
+    
     // MARK: Instance Properties
-    var pokemon: Pokemon
+    let pokemonId: Int
     
     // MARK: View Properties
-    var body: some View {
+    func body(props: Props) -> some View {
         ZStack(alignment: .top) {
             Color.white
                 .cornerRadius(20.0)
@@ -24,20 +34,20 @@ struct PokemonListRow: View {
                     x: 0.0,
                     y: 10.0)
                 .padding(.top, 60)
-            KFImage(URL(string: pokemon.listImageStringURL))
+            KFImage(URL(string: props.pokemon.listImageStringURL))
                 .frame(width: 110, height: 110)
             VStack(alignment: .center, spacing: 0) {
-                Text("N°\(pokemon.id)")
+                Text(props.pokemon.id < 1 ? "--" : "N°\(props.pokemon.id)")
                     .font(Style.Font.bold(sized: 12.0))
                     .foregroundColor(Color.gray)
                 Color.white
                     .frame(height: 6)
-                Text(pokemon.name ?? "-")
+                Text(props.pokemon.name ?? "-")
                     .font(Style.Font.bold(sized: 18.0))
                     .foregroundColor(Color.black)
                 Color.white
                     .frame(height: 10)
-                PokemonTypeBadgeContainerView(pokemonTypes: pokemon.sortedTypes)
+                PokemonTypeBadgeContainerView(pokemonTypes: props.pokemon.sortedTypes)
                     .frame(height: 40)
             }
             .padding(.top, 100)
@@ -54,12 +64,8 @@ struct PokemonListRow_Previews: PreviewProvider {
             Style.Color.listBackground
                 .ignoresSafeArea()
             HStack(spacing: 0) {
-                ForEach([
-                    pokemonSimpleSampleBulbasaur,
-                    pokemonSimpleSampleIvysaur
-                ]) {
-                    PokemonListRow(pokemon: $0)
-                }
+                PokemonListRow(pokemonId: pokemonSimpleSampleBulbasaur.id)
+                PokemonListRow(pokemonId: pokemonSimpleSampleIvysaur.id)
             }
         }
     }

@@ -6,10 +6,20 @@
 //
 
 import SwiftUI
+import SwiftUIFlux
 
 // MARK: - Pokemon List View
 /// This component represents the Pokedex (list of Pokemon)
-struct PokemonList: View {
+struct PokemonList: ConnectedView {
+    // MARK: Flux
+    struct Props {
+        let pokemons: [Pokemon]
+    }
+    
+    func map(state: AppState, dispatch: @escaping DispatchFunction) -> Props {
+        return Props(pokemons: state.pokemonState.pokemons)
+    }
+    
     // MARK: Static Properties
     /// The amount of elements to display per line
     static let elementsPerLine: Int = 2
@@ -18,25 +28,31 @@ struct PokemonList: View {
         .map { _ in GridItem(.flexible()) }
     
     // MARK: Computed Properties
-    private var pokemons: [Pokemon] {
+    private func pokemonsFilteredForArray(
+        from props: Props,
+        inLastLine: Bool
+    ) -> [Pokemon] {
+        return inLastLine ?
+            pokemons(props).suffix(pokemons(props).count % PokemonList.elementsPerLine) :
+            pokemons(props).dropLast(pokemons(props).count % PokemonList.elementsPerLine)
+    }
+
+    private func pokemons(_ props: Props) -> [Pokemon] {
         let typed = typedText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         return typedText.isEmpty ?
-            pokemonCoordinator.pokemons :
-        pokemonCoordinator.pokemons.filter {
-            ($0.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
-                .contains(typed)
+            props.pokemons :
+            props.pokemons.filter {
+                ($0.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+                    .contains(typed)
         }
     }
     
     // MARK: Instance Properties
-    /// The Pokemons container
-    @EnvironmentObject var pokemonCoordinator: PokemonCoordinator
-    
     /// If the list should present a `Pokemon`
     @State private var isPresentingPokemon: Bool = false
-    /// If the view is in a loading state
+//    /// If the view is in a loading state
     @State private var loading: Bool = true
-    /// The selected Pokemon id
+//    /// The selected Pokemon id
     @State private var pokemonId: Int?
     /// Variable tracking the focus state of the text field
     @FocusState private var textFieldIsFocused: Bool
@@ -44,7 +60,7 @@ struct PokemonList: View {
     @State private var typedText: String = ""
 
     // MARK: View Properties
-    var body: some View {
+    func body(props: Props) -> some View {
         ZStack(alignment: .top) {
             Style.Color.listBackground
                 .ignoresSafeArea()
@@ -58,8 +74,8 @@ struct PokemonList: View {
                 .padding(.top, 16.0)
                 ScrollView {
                     LazyVGrid(columns: PokemonList.preference) {
-                        ForEach(pokemons.dropLast(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
-                            PokemonListRow(pokemon: pokemon)
+                        ForEach(pokemonsFilteredForArray(from: props, inLastLine: false), id: \.id) { pokemon in
+                            PokemonListRow(pokemonId: pokemon.id)
                                 .frame(width: (UIScreen.main.bounds.width / 2) - 16)
                                 .onTapGesture {
                                     presentAndFetchInformationOfPokemonWithId(pokemon.id)
@@ -67,8 +83,8 @@ struct PokemonList: View {
                         }
                     }
                     LazyHStack {
-                        ForEach(pokemons.suffix(pokemons.count % PokemonList.elementsPerLine), id: \.id) { pokemon in
-                            PokemonListRow(pokemon: pokemon)
+                        ForEach(pokemonsFilteredForArray(from: props, inLastLine: true), id: \.id) { pokemon in
+                            PokemonListRow(pokemonId: pokemon.id)
                                 .frame(width: (UIScreen.main.bounds.width / 2) - 16)
                                 .onTapGesture {
                                     presentAndFetchInformationOfPokemonWithId(pokemon.id)
@@ -82,9 +98,9 @@ struct PokemonList: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .preferredColorScheme(.dark)
         .onAppear {
-            pokemonCoordinator.loadAllPokemons {
+            store.dispatch(action: PokemonAsyncAction.loadAll {
                 loading = false
-            }
+            })
         }
         // The loading overview
         .modifier(PokemonListLoadingView(loading: $loading))
@@ -105,7 +121,7 @@ struct PokemonList: View {
         textFieldIsFocused = false
         isPresentingPokemon = true
         pokemonId = id
-        pokemonCoordinator.load(pokemonWithId: id)
+        store.dispatch(action: PokemonAsyncAction.load(pokemonId: id))
     }
 }
 
@@ -113,7 +129,7 @@ struct PokemonList: View {
 struct PokemonList_Previews: PreviewProvider {
     static var previews: some View {
         PokemonList()
-            .environmentObject(PokemonCoordinator([
+            .environmentObject(sampleStore(with: [
                 pokemonSimpleSampleBulbasaur,
                 pokemonFullSampleCaterpie
             ]))

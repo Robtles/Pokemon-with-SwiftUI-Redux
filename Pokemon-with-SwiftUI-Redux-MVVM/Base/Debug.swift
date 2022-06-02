@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIFlux
 
 #if DEBUG
 // Simple Pokemons (for list purposes)
@@ -113,9 +114,16 @@ var pokemonFullSampleEevee: Pokemon {
     return pokemon
 }
 
-let samplePokemonCoordinator = PokemonCoordinator([
-    pokemonSimpleSampleBulbasaur,
-    pokemonFullSampleCaterpie,
-    pokemonFullSampleEevee
-])
+/// Creates a sample store for debugging with the passed Pokemons
+func sampleStore(with pokemons: [Pokemon]) -> Store<AppState> {
+    return Store<AppState>(
+        reducer: appReducer,
+        state: AppState(
+            pokemonState: PokemonState(
+                loadingState: [:],
+                pokemons: pokemons
+            )
+        )
+    )
+}
 #endif
